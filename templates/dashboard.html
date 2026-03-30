@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2 class="text-4xl mb-6 fade-in">Dashboard Intelligence</h2>
+
+<!-- STATS -->
+<div class="grid grid-cols-3 gap-4 mb-6">
+
+<div class="glass tilt p-4 text-center">
+<p>Total Links</p>
+<p class="text-3xl counter" data-target="{{data|length}}">0</p>
+</div>
+
+<div class="glass tilt p-4 text-center">
+<p>Total Clicks</p>
+<p class="text-3xl counter" data-target="{{data|sum(attribute=2)}}">0</p>
+</div>
+
+<div class="glass tilt p-4 text-center">
+<p>Status</p>
+<p class="text-green-400">Active 🚀</p>
+</div>
+
+</div>
+
+<!-- AI INSIGHTS -->
+<div class="glass p-4 mb-6">
+<h3 class="text-xl mb-2">🧠 Smart Insights</h3>
+
+{% set max_click = data|max(attribute=2) %}
+{% set min_click = data|min(attribute=2) %}
+
+<p>🔥 Best Link: {{max_click[1]}} ({{max_click[2]}} clicks)</p>
+<p>⚠️ Needs Attention: {{min_click[1]}} ({{min_click[2]}} clicks)</p>
+
+</div>
+
+<!-- TABLE -->
+<table class="w-full glass text-center mb-6">
+<tr class="bg-purple-700">
+<th>Short</th>
+<th>Clicks</th>
+<th>Performance</th>
+</tr>
+
+{% for r in data %}
+<tr>
+<td>{{r[1]}}</td>
+
+<td>{{r[2]}}</td>
+
+<td>
+{% if r[2] > 50 %}
+<span class="text-green-400">High 🔥</span>
+{% elif r[2] > 20 %}
+<span class="text-yellow-400">Medium ⚡</span>
+{% else %}
+<span class="text-red-400">Low ⚠️</span>
+{% endif %}
+</td>
+
+</tr>
+{% endfor %}
+</table>
+
+<!-- CHART -->
+<canvas id="chart"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+function loadChart(){
+fetch('/api').then(r=>r.json()).then(d=>{
+new Chart(document.getElementById('chart'),{
+type:'line',
+data:{
+labels:d.map(x=>x[0]),
+datasets:[{
+label:'Clicks',
+data:d.map(x=>x[1]),
+borderColor:'#a855f7',
+backgroundColor:'rgba(168,85,247,0.2)',
+fill:true,
+tension:0.4
+}]
+}
+})
+});
+}
+
+loadChart();
+setInterval(loadChart, 4000);
+
+// counters
+document.querySelectorAll('.counter').forEach(c=>{
+let t=+c.dataset.target;
+let n=0;
+function u(){
+n+=t/50;
+if(n<t){c.innerText=Math.floor(n);requestAnimationFrame(u);}
+else c.innerText=t;
+}
+u();
+});
+</script>
+
+{% endblock %}

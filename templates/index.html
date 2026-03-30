@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-xl mx-auto text-center fade-in">
+
+<div class="relative h-40 mb-6">
+<h1 id="hero-text" class="text-5xl font-bold"></h1>
+<div class="absolute inset-0 bg-purple-700 opacity-20 blur-3xl animate-pulse"></div>
+</div>
+
+<form method="POST" class="glass tilt p-6 flex flex-col gap-4">
+
+<input name="url" placeholder="Paste your URL..." class="p-3 rounded text-black">
+<input name="custom" placeholder="Custom short" class="p-3 rounded text-black">
+<input name="expiry" type="datetime-local" class="p-3 rounded text-black">
+
+<button class="btn p-3 rounded">Generate Link</button>
+
+</form>
+
+{% if short %}
+<div class="mt-6 glass p-4 tilt">
+<div class="flex gap-2 justify-center">
+<input value="http://127.0.0.1:5000/{{short}}" id="link" class="p-2 text-black w-72">
+<button onclick="copyLink()" class="bg-green-500 px-3">Copy</button>
+</div>
+</div>
+{% endif %}
+
+</div>
+
+<script>
+// typing effect
+const text = "Smart Link Intelligence";
+let i = 0;
+function type(){
+    if(i < text.length){
+        document.getElementById("hero-text").innerHTML += text[i];
+        i++;
+        setTimeout(type, 40);
+    }
+}
+type();
+
+// copy
+function copyLink(){
+    navigator.clipboard.writeText(document.getElementById("link").value);
+    showToast("Copied!");
+}
+</script>
+
+{% endblock %}

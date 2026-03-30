@@ -1,0 +1,30 @@
+
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-md mx-auto glass p-6 text-center">
+
+<h2 class="text-3xl mb-4">Login</h2>
+
+<form method="POST" class="flex flex-col gap-3">
+
+<input name="username" placeholder="Username"
+class="p-3 rounded text-black">
+
+<input name="password" type="password"
+placeholder="Password"
+class="p-3 rounded text-black">
+
+<button class="bg-purple-500 p-3 rounded btn">
+Login
+</button>
+
+</form>
+
+<a href="/register" class="mt-4 block text-gray-300">
+Create Account
+</a>
+
+</div>
+
+{% endblock %}

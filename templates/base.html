@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>LinkLens X</title>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Particles -->
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+
+<!-- Tilt -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
+
+<style>
+body {
+    background: linear-gradient(270deg, #0f0c29, #302b63, #24243e);
+    background-size: 600% 600%;
+    animation: gradient 10s ease infinite;
+}
+@keyframes gradient {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
+}
+
+/* Glass */
+.glass {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(15px);
+    border-radius: 15px;
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
+}
+.glass:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 30px rgba(168,85,247,0.6);
+}
+
+/* Button */
+.btn {
+    background: linear-gradient(90deg, #7c3aed, #a855f7);
+    transition: 0.3s;
+}
+.btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px #a855f7;
+}
+
+/* Cursor glow */
+#cursor-glow {
+    position: fixed;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(168,85,247,0.4), transparent);
+    pointer-events: none;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+}
+
+/* Fade animation */
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 1s forwards;
+}
+@keyframes fadeUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+</head>
+
+<body class="text-white min-h-screen opacity-0 transition-opacity duration-700" id="body">
+
+<!-- Cursor Glow -->
+<div id="cursor-glow"></div>
+
+<!-- Particles -->
+<div id="particles-js" style="position:fixed; width:100%; height:100%; z-index:-1;"></div>
+
+<!-- Floating Navbar -->
+<nav class="fixed top-4 left-1/2 transform -translate-x-1/2 glass px-6 py-2 flex gap-6 z-50">
+<a href="/">Home</a>
+<a href="/dashboard">Dashboard</a>
+<a href="/logout">Logout</a>
+</nav>
+
+<div class="p-6 mt-16">
+{% block content %}{% endblock %}
+</div>
+
+<!-- Toast -->
+<div id="toast" class="fixed bottom-5 right-5 bg-green-500 px-4 py-2 rounded hidden"></div>
+
+<script>
+window.onload = () => {
+    document.getElementById("body").classList.remove("opacity-0");
+
+    // particles
+    tsParticles.load("particles-js", {
+        particles: {
+            number: { value: 60 },
+            color: { value: "#a855f7" },
+            opacity: { value: 0.3 },
+            size: { value: 3 },
+            move: { enable: true, speed: 1 }
+        }
+    });
+
+    // tilt
+    VanillaTilt.init(document.querySelectorAll(".tilt"), {
+        max: 15,
+        speed: 400,
+        glare: true,
+        "max-glare": 0.3
+    });
+}
+
+// cursor glow
+document.addEventListener("mousemove", e => {
+    let glow = document.getElementById("cursor-glow");
+    glow.style.left = e.clientX + "px";
+    glow.style.top = e.clientY + "px";
+});
+
+// toast
+function showToast(msg){
+    let t = document.getElementById("toast");
+    t.innerText = msg;
+    t.classList.remove("hidden");
+    setTimeout(()=>t.classList.add("hidden"),2000);
+}
+
+// magnetic button
+document.addEventListener("mousemove", e => {
+    document.querySelectorAll('.btn').forEach(btn => {
+        const rect = btn.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width/2;
+        const y = e.clientY - rect.top - rect.height/2;
+        btn.style.transform = `translate(${x*0.1}px, ${y*0.1}px)`;
+    });
+});
+</script>
+
+</body>
+</html>
